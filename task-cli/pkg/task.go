@@ -39,23 +39,20 @@ func (t *Tasks) Add(desc string) {
 }
 
 func (t *Tasks) Delete(id int) error {
-	if id <= 0 || id >= len(*t) {
-		return fmt.Errorf("Task %d doesn't exist", id)
-	}
+	t.confirmID(id)
 
 	// Spread it because append
 	// accepts a slice and objects/types
-	*t = append((*t)[:id], (*t)[id:]...)
+	// ID are not 0 based indexed
+	*t = append((*t)[:id-1], (*t)[id:]...)
 
 	return nil
 }
 
 func (t *Tasks) Status(id int, status Status) error {
-	if id <= 0 || id >= len(*t) {
-		return fmt.Errorf("Task %d doesn't exist", id)
-	}
+	t.confirmID(id)
 
-	(*t)[id].Status = status
+	(*t)[id-1].Status = status
 
 	return nil
 }
@@ -79,4 +76,12 @@ func (t *Tasks) Get(filepath string) error {
 	}
 
 	return json.Unmarshal(byte, t)
+}
+
+func (t *Tasks) confirmID(id int) error {
+	if id < 1 || id > len(*t) {
+		return fmt.Errorf("Task %d doesn't exist", id)
+	}
+
+	return nil
 }
