@@ -1,10 +1,3 @@
-// Track what you are going to do
-// Track what you have done
-// Track what you are doing
-
-// Must work from the CLI
-// accept users actions and inputs as arguments
-// and store the file in a JSON file
 
 // user should be able to
 // add, update and delete task
