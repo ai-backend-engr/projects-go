@@ -43,9 +43,15 @@ func main() {
 		}
 
 		fmt.Printf("# Output: Task added successfully (ID: %d)\n", id)
+
 	case *list:
-		if err := t.Get(filename); err != nil {
-			printErr(err)
+		if len(*t) <= 0 {
+			const colorReset = "\033[0m"
+			const colorPrompt = "\033[32m" // Green
+			const colorCmd = "\033[1;36m"  // Bold Cyan
+			fmt.Printf("# Output: You currently do not have any task\n  To add a new task\n\t %s$%s %stask -add 'task name'%s\n", colorPrompt, colorReset, colorCmd, colorReset)
+
+			os.Exit(0)
 		}
 
 		// Initialize and create table title and header
@@ -53,22 +59,24 @@ func main() {
 		tw.SetTitle("All your tasks")
 		tw.AppendHeader(table.Row{"ID", "DESCRIPTION", "STATUS", "CREATED AT", "UPDATED AT"})
 
+		// Append table rows
 		for _, v := range *t {
 			tw.AppendRow(table.Row{v.ID, v.Description, v.Status, v.CreatedAt, v.UpdatedAt})
 		}
 
+		// Filter the rows, if arg is provided
 		if len(flag.Args()) > 0 {
 			tw.FilterBy([]table.FilterBy{{Number: 3, Operator: table.Equal, Value: flag.Arg(0)}})
 		}
 
 		// Transformer function to dynamically change the status color
-		nameTransformer := text.Transformer(func(val interface{}) string {
-			switch {
-			case val == task.StatusToDo:
+		nameTransformer := text.Transformer(func(val any) string {
+			switch val {
+			case task.StatusToDo:
 				return text.Colors{text.FgCyan}.Sprint(val)
-			case val == task.StatusDone:
+			case task.StatusDone:
 				return text.Colors{text.FgRed}.Sprint(val)
-			case val == task.StatusInProgress:
+			case task.StatusInProgress:
 				return text.Colors{text.FgGreen}.Sprint(val)
 			}
 			return fmt.Sprint(val)
@@ -112,6 +120,10 @@ func main() {
 		}
 
 	case *update > 0:
+		t.Update(*update, flag.Arg(0))
+		if err := t.Save(filename); err != nil {
+			printErr(err)
+		}
 
 	default:
 		fmt.Fprintf(os.Stderr, "Invalid flag passed")

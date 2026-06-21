@@ -61,6 +61,11 @@ func (t *Tasks) Status(id int, status Status) error {
 	return nil
 }
 
+func (t *Tasks) Update(id int, desc string) {
+	t.confirmID(id)
+	(*t)[id-1].Description = desc
+}
+
 func (t *Tasks) Save(filepath string) error {
 	js, err := json.Marshal(t)
 	if err != nil {

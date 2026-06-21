@@ -79,6 +79,25 @@ func TestStatus(t *testing.T) {
 	}
 }
 
+func TestUpdate(t *testing.T) {
+	desc := "Before update"
+	newDesc := "After update"
+
+	tsk := task.Tasks{}
+
+	tsk.Add(desc)
+
+	if tsk[0].Description != desc {
+		t.Errorf("Expected %s but got %s", desc, tsk[0].Description)
+	}
+
+	tsk.Update(1, newDesc)
+
+	if tsk[0].Description != newDesc {
+		t.Errorf("Expected %s but got %s", newDesc, tsk[0].Description)
+	}
+}
+
 func TestSaveGet(t *testing.T) {
 	tsk := task.Tasks{}
 	tsk2 := task.Tasks{}
