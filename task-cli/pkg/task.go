@@ -26,9 +26,11 @@ type task struct {
 
 type Tasks []task
 
-func (t *Tasks) Add(desc string) {
+func (t *Tasks) Add(desc string) int {
+	id := len(*t) + 1
+
 	item := task{
-		ID:          len(*t) + 1,
+		ID:          id,
 		Status:      StatusToDo,
 		Description: desc,
 		CreatedAt:   time.Now(),
@@ -36,6 +38,8 @@ func (t *Tasks) Add(desc string) {
 	}
 
 	*t = append(*t, item)
+
+	return id
 }
 
 func (t *Tasks) Delete(id int) error {
