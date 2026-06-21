@@ -5,6 +5,7 @@ import (
 	"errors"
 	"fmt"
 	"os"
+	"slices"
 	"time"
 )
 
@@ -27,7 +28,14 @@ type task struct {
 type Tasks []task
 
 func (t *Tasks) Add(desc string) int {
-	id := len(*t) + 1
+	var id int
+
+	if len(*t) == 0 {
+		id = 1
+	} else {
+		// add one to the ID of the last item
+		id = (*t)[len(*t)-1].ID + 1
+	}
 
 	item := task{
 		ID:          id,
@@ -43,28 +51,35 @@ func (t *Tasks) Add(desc string) int {
 }
 
 func (t *Tasks) Delete(id int) error {
-	t.confirmID(id)
+	idx := t.getIndex(id)
+	if idx == -1 {
+		return fmt.Errorf("Task %d doesn't exist", id)
+	}
 
-	// Spread it because append
-	// accepts a slice and objects/types
-	// ID are not 0 based indexed
-	*t = append((*t)[:id-1], (*t)[id:]...)
+	*t = append((*t)[:idx], (*t)[idx+1:]...)
 
 	return nil
 }
 
 func (t *Tasks) Status(id int, status Status) error {
-	t.confirmID(id)
+	idx := t.getIndex(id)
+	if idx == -1 {
+		return fmt.Errorf("Task %d doesn't exist", id)
+	}
 
-	(*t)[id-1].Status = status
+	(*t)[idx].Status = status
 
 	return nil
 }
 
 func (t *Tasks) Update(id int, desc string) error {
-	t.confirmID(id)
+	idx := t.getIndex(id)
+	if idx == -1 {
+		return fmt.Errorf("Task %d doesn't exist", id)
+	}
 
-	(*t)[id-1].Description = desc
+	(*t)[idx].Description = desc
+	(*t)[idx].UpdatedAt = time.Now()
 
 	return nil
 }
@@ -90,10 +105,8 @@ func (t *Tasks) Get(filepath string) error {
 	return json.Unmarshal(byte, t)
 }
 
-func (t *Tasks) confirmID(id int) error {
-	if id < 1 || id > len(*t) {
-		return fmt.Errorf("Task %d doesn't exist", id)
-	}
-
-	return nil
+func (t *Tasks) getIndex(id int) int {
+	return slices.IndexFunc(*t, func(t task) bool {
+		return t.ID == id
+	})
 }
