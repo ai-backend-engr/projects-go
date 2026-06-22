@@ -87,12 +87,5 @@ task-cli/
 └── internal/ui/   # Table rendering
 ```
 
-## Testing
 
-```bash
-go test ./...
-```
 
-## Reference
-
-- [Task Tracker CLI — roadmap.sh](https://roadmap.sh/projects/task-tracker)
