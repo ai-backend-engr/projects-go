@@ -75,7 +75,7 @@ func TestStatus(t *testing.T) {
 	tsk.Status(1, task.StatusDone)
 
 	if tsk[0].Status != task.StatusDone {
-		t.Errorf("Expected %s, got %s", task.StatusInProgress, tsk[0].Status)
+		t.Errorf("Expected %s, got %s", task.StatusDone, tsk[0].Status)
 	}
 }
 

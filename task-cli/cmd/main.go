@@ -9,14 +9,14 @@ import (
 	task "github.com/ai-backend-engr/projects-go/tree/main/task-cli/pkg"
 )
 
-// Default filname
+// Default filename
 var filename = "./tasks.json"
 
 func main() {
 	// Parse the command flags
 	add := flag.String("add", "", "Add a new task")
 	list := flag.Bool("list", false, "List all tasks")
-	delete := flag.Int("delete", 0, "Delete a todo task")
+	delID := flag.Int("delete", 0, "Delete a todo task")
 	update := flag.Int("update", 0, "Update a todo task description")
 	done := flag.Int("mark-done", 0, "Update a todo task status (done)")
 	progress := flag.Int("mark-in-progress", 0, "Update a todo task status (in-progress)")
@@ -25,7 +25,7 @@ func main() {
 
 	t := &task.Tasks{}
 
-	// Get existing tasks from the json fiile
+	// Get existing tasks from the json file
 	if err := t.Get(filename); err != nil {
 		printErr(err)
 	}
@@ -56,12 +56,16 @@ func main() {
 			printErr(err)
 		}
 		save(*t)
-	case *delete > 0:
-		if err := t.Delete(*delete); err != nil {
+	case *delID > 0:
+		if err := t.Delete(*delID); err != nil {
 			printErr(err)
 		}
 		save(*t)
 	case *update > 0:
+		if flag.NArg() == 0 {
+			fmt.Fprintln(os.Stderr, "You are missing the task description")
+			os.Exit(1)
+		}
 		if err := t.Update(*update, flag.Arg(0)); err != nil {
 			printErr(err)
 		}
@@ -74,7 +78,7 @@ func main() {
 }
 
 func printErr(err error) {
-	fmt.Fprintf(os.Stderr, "%s", err)
+	fmt.Fprintln(os.Stderr, err)
 	os.Exit(1)
 }
 

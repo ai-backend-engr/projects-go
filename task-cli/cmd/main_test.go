@@ -11,7 +11,7 @@ import (
 
 var (
 	binName  = "task"
-	filename = "./task.json"
+	filename = "./tasks.json"
 )
 
 // Function that runs setup process for tests

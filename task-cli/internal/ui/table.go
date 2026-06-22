@@ -28,11 +28,11 @@ func RenderTable(t *task.Tasks) {
 	nameTransformer := text.Transformer(func(val any) string {
 		switch val {
 		case task.StatusToDo:
-			return text.Colors{text.FgCyan}.Sprint(val)
-		case task.StatusDone:
 			return text.Colors{text.FgRed}.Sprint(val)
-		case task.StatusInProgress:
+		case task.StatusDone:
 			return text.Colors{text.FgGreen}.Sprint(val)
+		case task.StatusInProgress:
+			return text.Colors{text.FgYellow}.Sprint(val)
 		}
 		return fmt.Sprint(val)
 	})

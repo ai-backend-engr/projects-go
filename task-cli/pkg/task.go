@@ -17,7 +17,7 @@ const (
 	StatusInProgress Status = "in-progress"
 )
 
-type task struct {
+type Task struct {
 	ID          int       `json:"id"`
 	Status      Status    `json:"status"`
 	Description string    `json:"description"`
@@ -25,7 +25,7 @@ type task struct {
 	UpdatedAt   time.Time `json:"updatedAt"`
 }
 
-type Tasks []task
+type Tasks []Task
 
 func (t *Tasks) Add(desc string) int {
 	var id int
@@ -37,7 +37,7 @@ func (t *Tasks) Add(desc string) int {
 		id = (*t)[len(*t)-1].ID + 1
 	}
 
-	item := task{
+	item := Task{
 		ID:          id,
 		Status:      StatusToDo,
 		Description: desc,
@@ -68,6 +68,7 @@ func (t *Tasks) Status(id int, status Status) error {
 	}
 
 	(*t)[idx].Status = status
+	(*t)[idx].UpdatedAt = time.Now()
 
 	return nil
 }
@@ -106,7 +107,7 @@ func (t *Tasks) Get(filepath string) error {
 }
 
 func (t *Tasks) getIndex(id int) int {
-	return slices.IndexFunc(*t, func(t task) bool {
+	return slices.IndexFunc(*t, func(t Task) bool {
 		return t.ID == id
 	})
 }
